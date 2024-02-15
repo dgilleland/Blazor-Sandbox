@@ -36,3 +36,5 @@ dotnet watch
 ```
 
 At this point, the Blazor application will be compiled and launched by executing the application's `Program.cs` code. Note that the settings used for launching are in the `Website/Properties/launchSettings.json` file.
+
+> It's recommended to launch the website from within the built-in terminal in VS Code rather than an external terminal. The reason for this is that, at present, the `dotnet watch` command cannot be exited from the external terminal with a simple <kbd>ctrl</kbd> + <kbd>c</kbd>. Rather, the whole terminal window must be shut down. However, from within the VS Code terminal, the <kbd>ctrl</kbd> + <kbd>c</kbd> shortcut correctly stops the web application and returns control back to the terminal.
