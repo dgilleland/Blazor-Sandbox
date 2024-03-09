@@ -5,3 +5,50 @@
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+
+@code {
+    private string? DirPath;
+    private IEnumerable<string> OtherPaths;
+    private string? Errors;
+    private MarkupString? ReadMe;
+    protected override void OnInitialized()
+    {
+        DirPath = Directory.GetCurrentDirectory();
+        try
+        {
+            OtherPaths = Directory.EnumerateFiles(@"C:\GH\2024-Jan-In-Class\Marking");
+            var found = OtherPaths.FirstOrDefault(x => x.EndsWith("ReadMe.md", StringComparison.InvariantCultureIgnoreCase));
+            if(!string.IsNullOrEmpty(found))
+            {
+                var md = File.ReadAllText(found);
+                ReadMe = new MarkupString(Markdig.Markdown.ToHtml(md));
+            }
+        }
+        catch(Exception ex)
+        {
+            Errors = ex.Message;
+        }
+    }
+}
+
+<fieldset>
+    <legend>Diagnostics</legend>
+    Running application from <code>@DirPath</code>.
+
+    @if(string.IsNullOrEmpty(Errors))
+    {
+        <ul>
+            @foreach(var item in OtherPaths)
+            {
+                <li>@item</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <blockquote style="color: darkred; background-color: lightgray; padding: 1em 2em;">@Errors</blockquote>
+    }
+
+    <hr />
+    <pre style="background-color: ##d6f7f647; padding: .5em .2em;"><code>@ReadMe</code></pre>
+</fieldset>

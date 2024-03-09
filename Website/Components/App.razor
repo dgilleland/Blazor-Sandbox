@@ -12,7 +12,37 @@
 
 <body>
     <Routes />
+    <footer>
+        <hr />
+        <p>This part was generated from within the <code>@ClassName</code> class in the <code>@FileName</code> file.</p>
+        <blockquote>
+            <details>
+                <summary><code>@FullClassName</code></summary>
+                <ul>
+                    @if (Info is not null)
+                    {
+                        foreach (var item in Info.ClassNames)
+                        {
+                            <li>@item</li>
+                        }
+                    }
+                </ul>
+            </details>
+        </blockquote>
+        <p>This Blazor application is being hosted at <code>@HostPath</code> and the web root is at
+            <code>@WWWRootPath</code>.
+        </p>
+    </footer>
     <script src="_framework/blazor.web.js"></script>
 </body>
 
 </html>
+
+@code {
+    private ClassInfo Info => new(this.GetType());
+    private string ClassName => this.GetType().Name;
+    private string? FullClassName => this.GetType().FullName;
+    private string FileName => $"{ClassName}.razor";
+    private string HostPath => Path.GetFullPath(".");
+    private string WWWRootPath => Path.Combine(HostPath, "wwwroot");
+}
