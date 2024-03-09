@@ -37,4 +37,14 @@ dotnet watch
 
 At this point, the Blazor application will be compiled and launched by executing the application's `Program.cs` code. Note that the settings used for launching are in the `Website/Properties/launchSettings.json` file.
 
-> It's recommended to launch the website from within the built-in terminal in VS Code rather than an external terminal. The reason for this is that, at present, the `dotnet watch` command cannot be exited from the external terminal with a simple <kbd>ctrl</kbd> + <kbd>c</kbd>. Rather, the whole terminal window must be shut down. However, from within the VS Code terminal, the <kbd>ctrl</kbd> + <kbd>c</kbd> shortcut correctly stops the web application and returns control back to the terminal.
+> It's recommended to launch the website from within the built-in terminal in VS Code rather than an external terminal. My reason for this is that, at present, the `dotnet watch` command cannot be exited from the external terminal with a simple <kbd>ctrl</kbd> + <kbd>c</kbd>. I'm not sure if this is by design, or is a bug. Rather, the whole terminal window must be shut down. However, from within the VS Code terminal, the <kbd>ctrl</kbd> + <kbd>c</kbd> shortcut correctly stops the web application and returns control back to the terminal.
+
+While `dotnet watch` is running, you can continue with your development and any changes to your Blazor application will be automatically compiled and available in your browser. This is called **Hot Module Reload** (or *HMR*), and is one of the very helpful tools to keep developers focused on their work while observing the results. Sometimes, however, the nature of the changes to your code base will require a re-start of your application (such as adding a new *NuGet* dependency, which would change your `*.csproj`). When dotnet's HMR notices this, it will prompt you with the following in the terminal:
+
+```ps
+dotnet watch ⌚ File changed: .\WebApp.csproj.
+  ❔ Do you want to restart your app - Yes (y) / No (n) / Always (a) / Never (v)?
+```
+
+> You can always force a re-build in `dotnet watch` by pressing **<kbd>ctrl</kbd> + <kbd>r</kbd>** to reload the terminal.
+

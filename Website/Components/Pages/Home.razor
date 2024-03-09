@@ -10,7 +10,8 @@ Welcome to your new app.
     private string? DirPath;
     private IEnumerable<string> OtherPaths;
     private string? Errors;
-    private MarkupString? ReadMe;
+    private MarkupString ReadMe;
+    private string Markdown;
     protected override void OnInitialized()
     {
         DirPath = Directory.GetCurrentDirectory();
@@ -20,8 +21,8 @@ Welcome to your new app.
             var found = OtherPaths.FirstOrDefault(x => x.EndsWith("ReadMe.md", StringComparison.InvariantCultureIgnoreCase));
             if(!string.IsNullOrEmpty(found))
             {
-                var md = File.ReadAllText(found);
-                ReadMe = new MarkupString(Markdig.Markdown.ToHtml(md));
+                Markdown = File.ReadAllText(found);
+                ReadMe = new MarkupString(Markdig.Markdown.ToHtml(Markdown));
             }
         }
         catch(Exception ex)
@@ -50,5 +51,34 @@ Welcome to your new app.
     }
 
     <hr />
-    <pre style="background-color: ##d6f7f647; padding: .5em .2em;"><code>@ReadMe</code></pre>
+    <section>
+        <details>
+            <summary>HTML</summary>
+            <article>@ReadMe</article>
+        </details>
+        <details>
+            <summary>Markdown</summary>
+            <pre style="background-color: ##d6f7f647; padding: .5em .2em;"><code>@Markdown</code></pre>
+        </details>
+    </section>
 </fieldset>
+<style>
+    fieldset > section {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        column-gap: 1.5em;
+        position: relative; /* Required for positioning pseudo-elements */
+    }
+    fieldset > section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: calc(50% - 1px); /* Center the bar vertically */
+        width: 2px; /* Adjust the width of the vertical bar */
+        background-color: #333; /* Set the color of the bar */
+    }
+    fieldset > section pre {
+        white-space: pre-line;
+    }
+</style>
