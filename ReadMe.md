@@ -48,3 +48,41 @@ dotnet watch ⌚ File changed: .\WebApp.csproj.
 
 > You can always force a re-build in `dotnet watch` by pressing **<kbd>ctrl</kbd> + <kbd>r</kbd>** to reload the terminal.
 
+## Publish & Deploy to Docker
+
+> *This portion presumes you already have **Docker Desktop** installed on your computer.*
+
+One of the joys of deployment for web app developers these days is **Docker**. Since the release of .NET7, it's been possible to publish a deployment package directly from the CLI with `dotnet publish`. Here's an example (used for this project):
+
+```ps
+dotnet publish --os linux --arch x64 -c Release --sc -p:PublishProfile=DefaultContainer
+```
+
+This will create a release version (`-c Release`) of the application that will run on a 64-bit (`--arch x64`) version of Linux (`--os linux`). The application will be self-contained (`--sc`), meaning that the appropriate .NET runtime will be included in the application. Lastly, this will be bundled up into a docker image and added to the locally installed Docker instance (`-p:PublishProfile=DefaultContainer`).
+
+> More information on these flags can be found in the official documentation on [`dotnet publish`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-publish). You may also be interested in reading [Containerize a .NET app with dotnet publish](https://learn.microsoft.com/en-us/dotnet/core/docker/publish-as-container?pivots=dotnet-8-0).
+
+When you run the `publish` command above, your output in the terminal should end with information on the resulting image that is similar to the following.
+
+```ps
+  Building image 'webapp' with tags 'latest' on top of base image 'mcr.microsoft.com/dotnet/runtime-deps:8.0'.
+  Pushed image 'webapp:latest' to local registry via 'docker'.
+```
+
+Now, your local Docker instance will have an image named `webapp:latest`.
+
+### Running Your Docker Image
+
+Once you have a docker image, you can *run* it as a *container* in Docker. Again, this can be done from the command line using the `docker` CLI.
+
+```ps
+docker run -d --name app_in_a_box -p 54321:80 webapp:latest
+```
+
+### Adding A Shared Directory
+
+Your docker containers run in an isolated environment within Docker, meaning that your docker-based application will not have access to the file system of your local machine (i.e.: your computer, which acts as the *host* that is running Docker). It is possible, however, to share a folder from your local computer, thereby making it accessible to your web application. In the following example, I am sharing a local folder that has a "ReadMe.md" file so that my Blazor application can read the contents.
+
+```ps
+--mount type=bind,source="/mnt/c/GH/SomePath/DevJournal",target="/dgilleland"
+```
