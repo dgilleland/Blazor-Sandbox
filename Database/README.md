@@ -1,5 +1,7 @@
 # New SDK-style SQL project with Microsoft.Build.Sql
 
+> ***Note:** This project is built with adaptations primarily based on the article [Migrating database to new SDK style SQL project and containerising](https://iqan.medium.com/migrating-database-to-new-sdk-style-sql-project-and-containerising-it-133ecea460a8) by [Iqan Shaikh](https://iqan.medium.com/). Database purpose and content are based off of various ideas meant to demonstrate a sample database.
+
 ## Setup
 
 This project was created from scratch using the SQL Database Project template. To install the template (a one-time step), run the following command:

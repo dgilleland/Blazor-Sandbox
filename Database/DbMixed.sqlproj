@@ -5,5 +5,19 @@
     <Name>DbMixed</Name>
     <DSP>Microsoft.Data.Tools.Schema.Sql.Sql160DatabaseSchemaProvider</DSP>
     <ModelCollation>1033, CI</ModelCollation>
+    <ProjectGuid>{00000000-0000-0000-0000-000000000000}</ProjectGuid>
   </PropertyGroup>
+  <!-- Compilation Properties -->
+  <PropertyGroup>
+    <GenerateCreateScript>True</GenerateCreateScript>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+  </PropertyGroup>
+  <!-- Pre- and Post-Deployment scripts -->
+  <ItemGroup>
+    <PreDeploy Include="Scripts\PreDeployment.sql" />
+    <PostDeploy Include="Scripts\PostDeployment.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Tables" />
+  </ItemGroup>
 </Project>
