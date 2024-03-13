@@ -1,5 +1,19 @@
 # New SDK-style SQL project with Microsoft.Build.Sql
 
+## Setup
+
+This project was created from scratch using the SQL Database Project template. To install the template (a one-time step), run the following command:
+
+```bash
+dotnet new install Microsoft.Build.Sql.Templates
+```
+
+Now, all you need to do is use the `sqlproj` template, as in this example:
+
+```bash
+dotnet new sqlproj -o Database -n DbMixed
+```
+
 ## Build
 
 To build the project, run the following command:
