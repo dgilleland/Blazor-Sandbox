@@ -86,3 +86,5 @@ Your docker containers run in an isolated environment within Docker, meaning tha
 ```ps
 --mount type=bind,source="/mnt/c/GH/SomePath/DevJournal",target="/dgilleland"
 ```
+
+For those Windows users who are not familiar with paths in a Linux-based environment, the `/mnt/c/` is equivalent to identifying the `C:\` drive.
