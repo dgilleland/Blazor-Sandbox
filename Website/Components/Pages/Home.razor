@@ -8,41 +8,61 @@
 
 Welcome to your new app.
 
+<hr />
+@if(!IsLoaded)
+{
+    <h3>Loading...</h3>
+}
+else
+{
+    <h3>There are @Folders.Count() Folders</h3>
+    <ul>
+        @foreach(var folder in Folders)
+        {
+            <li>@folder</li>
+        }
+    </ul>
+}
+<hr />
 @code {
-    enum OSPath { WindowsCompatible, LinuxCompatible }
-    private string? CurrentDirectory;
-    private string? PathRoot;
-    private OSPath HostedFileSystem;
+    private bool IsLoaded = false;
+    private IEnumerable<string>? Folders = null;
     private IEnumerable<string> OtherFiles;
     private string? Errors;
+
     private MarkupString ReadMe;
     private string Markdown;
-    private IEnumerable<string> ExcludedWinDirectories = new string[] { @"C:\Windows", @"C:\Program Files", @"C:\Program Files (x86)", @"C:\ProgramData", @"C:\Users", @"C:\$Recycle.Bin", @"C:\System Volume Information", @"C:\pagefile.sys", @"C:\hiberfil.sys", @"C:\Config.Msi" };
-    private IEnumerable<string> ExcludedNixDirectories = new string[] { @"/proc", @"/sys", @"/dev", @"/boot", @"/tmp", @"/run", @"/home", @"/root", @"/etc", @"/var", @"/opt", @"/srv", @"/bin", @"/sbin", @"/lib", @"/lib64", @"/usr", @"/var" };
-    protected override void OnInitialized()
+    
+    protected override async Task OnInitializedAsync()
     {
-        CurrentDirectory = Directory.GetCurrentDirectory();
-        PathRoot = Directory.GetDirectoryRoot(CurrentDirectory);
-        HostedFileSystem = PathRoot.Length == 1 ? OSPath.LinuxCompatible : OSPath.WindowsCompatible;
+        await Task.Run(() => {
+            LoadFolderInfo();
+        });
+        IsLoaded = true;
+        StateHasChanged();
+
+    }
+    private void LoadFolderInfo()
+    {
+        @* Folders = new List<string>(); *@
         try
         {
-            var excludedFolders = HostedFileSystem == OSPath.WindowsCompatible ? ExcludedWinDirectories : ExcludedNixDirectories; // List of folder names to skip
-
-            var options = new EnumerationOptions
+            Folders = HostedFileSystem
+                    .EnumerateDirectories();
+            var markingPath = Folders.FirstOrDefault(x => x.EndsWith(@"\dgilleland"));
+            if(markingPath is not null)
             {
-                IgnoreInaccessible = true,
-                RecurseSubdirectories = true // Set this to false if you want to exclude subdirectories
-            };
-            var markingPath = 
-                Directory
-                    .EnumerateDirectories(PathRoot,"*dgilleland",options)
-                    .FirstOrDefault(dir => !excludedFolders.Any(dir.Contains));
-            OtherFiles = Directory.EnumerateFiles(markingPath);
-            var found = OtherFiles.FirstOrDefault(x => x.EndsWith("ReadMe.md", StringComparison.InvariantCultureIgnoreCase));
-            if(!string.IsNullOrEmpty(found))
+                OtherFiles = Directory.EnumerateFiles(markingPath);
+                var found = OtherFiles.FirstOrDefault(x => x.EndsWith("ReadMe.md", StringComparison.InvariantCultureIgnoreCase));
+                if(!string.IsNullOrEmpty(found))
+                {
+                    Markdown = File.ReadAllText(found);
+                    ReadMe = new MarkupString(Markdig.Markdown.ToHtml(Markdown));
+                }
+            }
+            else
             {
-                Markdown = File.ReadAllText(found);
-                ReadMe = new MarkupString(Markdig.Markdown.ToHtml(Markdown));
+                OtherFiles = new List<string>();
             }
         }
         catch(Exception ex)
@@ -52,9 +72,11 @@ Welcome to your new app.
     }
 }
 
+@if(IsLoaded)
+{
 <fieldset>
     <legend>Diagnostics</legend>
-    Running application from <code>@CurrentDirectory</code> on a <i>@HostedFileSystem.Humanize()</i> operating system.
+    Running application from <code>@HostedFileSystem.CurrentDirectory</code> on a <i>@HostedFileSystem.HostFileSystem.Humanize()</i> operating system.
 
     @if(string.IsNullOrEmpty(Errors))
     {
@@ -82,6 +104,7 @@ Welcome to your new app.
         </details>
     </section>
 </fieldset>
+}
 <style>
     fieldset > section {
         display: grid;
